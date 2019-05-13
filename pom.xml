@@ -5,7 +5,7 @@
 
     <groupId>com.jmlopez</groupId>
     <artifactId>fisojo</artifactId>
-    <version>1.1</version>
+    <version>1.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Fisojo</name>
