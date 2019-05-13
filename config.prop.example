@@ -1,0 +1,6 @@
+# Fisojo config example file
+
+fisheye.feauth=<feusername>:<numbers>:<awesome_hash>
+fisheye.projectId=<CR-TEAM>
+fisheye.baseServerUrl=<fisheye_server_url>
+slack.webhookUrl=<webhook_generated_from_slack>
