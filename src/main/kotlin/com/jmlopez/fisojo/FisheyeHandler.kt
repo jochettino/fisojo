@@ -89,6 +89,17 @@ class FisheyeHandler constructor(
         return timestamp
     }
 
-    fun convertIdToUrl(id: String) = "${config.baseServerUrl}/cru/$id"
+    fun createLinkText(text: String, url: String) = "<$url|$text>"
+
+    private fun convertReviewIdToUrl(id: String) = "${config.baseServerUrl}/cru/$id"
+
+    fun createLinkTextForReviewId(reviewName: String, reviewId: String) = createLinkText(reviewName, convertReviewIdToUrl(reviewId))
+
+    private fun convertUsernameToUrl(username: String) = "${config.baseServerUrl}/user/$username"
+
+    fun createLinkTextForUsername(username: String) = createLinkText(username, convertUsernameToUrl(username))
+
+
+
 
 }
