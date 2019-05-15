@@ -41,12 +41,11 @@ fun main(args: Array<String>) {
 
             var messageForSending = ""
 
-            reviewDataListFromServer.forEach {
-                val reviewId = it.permaId.id
-                val fisheyeUsername = it.author.userName
-                val slackUsername = getSlackUsername(fisheyeUsername)
-                val reviewName = it.name
-                val str = "New CR by @$slackUsername: <" + fisheyeHandler.convertIdToUrl(reviewId) + "|$reviewName>"
+            reviewDataListFromServer.forEach { review ->
+                val id = review.permaId.id
+                val username = review.author.userName
+                val name = review.name
+                val str = "New CR by ${fisheyeHandler.createLinkTextForUsername(username)}: ${fisheyeHandler.createLinkTextForReviewId(name, id)}"
                 println(str)
                 messageForSending += str + "\n"
             }
@@ -69,8 +68,3 @@ fun main(args: Array<String>) {
     }
 
 }
-
-// TODO
-// this method returns the slack username expected but is printed as plain text in slack (no mentions, no clickable)
-val userFisheyeToSlackUsernameMap = mapOf("jmlopez" to "josh")
-fun getSlackUsername(fisheyeUsername: String) = userFisheyeToSlackUsernameMap.getOrDefault(fisheyeUsername, fisheyeUsername)
