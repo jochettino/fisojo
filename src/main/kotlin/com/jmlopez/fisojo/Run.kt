@@ -2,6 +2,8 @@ package com.jmlopez.fisojo
 
 import com.jmlopez.fisojo.config.ConfigReaderImpl
 import com.jmlopez.fisojo.dto.ReviewData
+import com.jmlopez.fisojo.logger.LoggerProvider
+import org.apache.logging.log4j.Level
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
@@ -11,14 +13,27 @@ fun main(args: Array<String>) {
     val SLEEP_IN_SECS: Long = 30
     val SLEEP_IN_MILIS: Long = SLEEP_IN_SECS*1000
 
-    if (args.size != 1) {
-        println("<properties_file> not passed as argument")
+    if (args.isEmpty() || args.size > 2) {
+        System.err.println("Expected params: <properties_file> [--debug]")
         exitProcess(1)
     }
 
-    val configReader = ConfigReaderImpl(args[0])
+    val loggerProvider = LoggerProvider()
+    val logger = loggerProvider.getLogger("main")
 
-    val fisheyeHandler = FisheyeHandler(configReader.getFisheyeConfig())
+    var propsFilename: String? = null
+
+    args.forEach {
+        if (it == "--debug") {
+            loggerProvider.setDefaultLevel(Level.DEBUG)
+        } else {
+            propsFilename = it
+        }
+    }
+
+    val configReader = ConfigReaderImpl(propsFilename!!)
+
+    val fisheyeHandler = FisheyeHandler(configReader.getFisheyeConfig(), loggerProvider)
     val slackHandler = SlackHandler(configReader.getSlackConfig())
 
     while(true) {
@@ -28,15 +43,15 @@ fun main(args: Array<String>) {
         try {
             reviewDataListFromServer = fisheyeHandler.getReviewDataListFromServer()
         } catch (ex: Exception) {
-            println("Error getting data from Fisheye: " + ex.message)
-            println("Last call: " + fisheyeHandler.lastHttpCall)
-            println("Sleeping " + SLEEP_IN_SECS*4 + " secs")
+            logger.error("Error getting data from Fisheye: ${ex.message}")
+            logger.error("Last call: ${fisheyeHandler.lastHttpCall}")
+            logger.error("Sleeping ${SLEEP_IN_SECS*4} secs")
             Thread.sleep(SLEEP_IN_MILIS*4)
             continue
         }
 
         if (reviewDataListFromServer.isEmpty()) {
-            println("New reviews not found")
+            logger.info("New reviews not found")
         } else {
 
             var messageForSending = ""
@@ -54,17 +69,17 @@ fun main(args: Array<String>) {
             try {
                 slackHandler.sendMessageToSlack(messageForSending)
             } catch (ex: Exception) {
-                println("Error sending data to Slack")
-                println("Last call: " + slackHandler.lastHttpCall)
-                println("Sleeping " + SLEEP_IN_SECS*4 + " secs")
+                logger.error("Error sending data to Slack")
+                logger.error("Last call: ${slackHandler.lastHttpCall}")
+                logger.error("Sleeping ${SLEEP_IN_SECS*4} secs")
                 Thread.sleep(SLEEP_IN_MILIS*4)
                 continue
             }
         }
 
-        println("Fisojo is going to sleep $SLEEP_IN_SECS secs")
+        logger.info("Fisojo is going to sleep $SLEEP_IN_SECS secs")
         Thread.sleep(SLEEP_IN_MILIS)
-        println("Fisojo is awaken")
+        logger.info("Fisojo is awaken")
     }
 
 }
