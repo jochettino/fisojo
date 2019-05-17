@@ -8,7 +8,6 @@ import com.jmlopez.fisojo.logger.LoggerProvider
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
-import org.apache.logging.log4j.Logger
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -101,8 +100,5 @@ class FisheyeHandler constructor(
     private fun convertUsernameToUrl(username: String) = "${config.baseServerUrl}/user/$username"
 
     fun createLinkTextForUsername(username: String) = createLinkText(username, convertUsernameToUrl(username))
-
-
-
 
 }
