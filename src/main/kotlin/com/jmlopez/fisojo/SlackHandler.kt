@@ -14,10 +14,11 @@ import java.util.Locale
 
 class SlackHandler constructor(
     private val config: SlackConfig,
-    private val fisheyeConfig: FisheyeConfig
+    fisheyeConfig: FisheyeConfig
 ){
 
     var lastHttpCall = ""
+    val fisheyeBaseUrl = fisheyeConfig.baseServerUrl
 
     fun sendMessageToSlack(review: List<ReviewData>) {
         val formData = review.joinToString(",", """{"attachments":[""", "]}") { it.toSlack() }
@@ -42,12 +43,12 @@ class SlackHandler constructor(
         """{"title":"${permaId.id}","title_link":"${url()}","author_name":"${authorLink()}","text":"$name",
             |"footer":"<!date^${due()}^Due on {date_short_pretty} {time}|a>"}""".trimMargin()
 
-    private fun ReviewData.url() = "${fisheyeConfig.baseServerUrl}/cru/${this.permaId.id}"
+    private fun ReviewData.url() = "$fisheyeBaseUrl/cru/${this.permaId.id}"
 
     private fun ReviewData.due(): Long =
         LocalDateTime.parse(dueDate, FISHEYE_FORMATTER).atZone(ZoneOffset.UTC).toEpochSecond()
 
-    private fun ReviewData.authorLink() = "<https://fisheye.tuenti.io/user/${creator.userName}|${creator.userName}>"
+    private fun ReviewData.authorLink() = "<$fisheyeBaseUrl/user/${creator.userName}|${creator.userName}>"
 
     companion object {
         val FISHEYE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ENGLISH)!!
