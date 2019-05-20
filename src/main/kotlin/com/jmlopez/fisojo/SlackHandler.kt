@@ -7,6 +7,7 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -38,16 +39,17 @@ class SlackHandler constructor(
 
 
     private fun ReviewData.toSlack() =
-        """{"title":"${permaId.id}","title_link":"${url()}","author_name":"${authorLink()}","text":"$name","footer":"Due on ${due()}"}"""
+        """{"title":"${permaId.id}","title_link":"${url()}","author_name":"${authorLink()}","text":"$name",
+            |"footer":"<!date^${due()}^Due on {date_short_pretty} {time}|a>"}""".trimMargin()
 
     private fun ReviewData.url() = "${fisheyeConfig.baseServerUrl}/cru/${this.permaId.id}"
 
-    private fun ReviewData.due(): String = LocalDateTime.parse(dueDate, FISHEYE_FORMATTER).format(FORMATTER)
+    private fun ReviewData.due(): Long =
+        LocalDateTime.parse(dueDate, FISHEYE_FORMATTER).atZone(ZoneOffset.UTC).toEpochSecond()
 
     private fun ReviewData.authorLink() = "<https://fisheye.tuenti.io/user/${creator.userName}|${creator.userName}>"
 
     companion object {
-        val FISHEYE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ENGLISH)
-        val FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.ENGLISH)
+        val FISHEYE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ENGLISH)!!
     }
 }
