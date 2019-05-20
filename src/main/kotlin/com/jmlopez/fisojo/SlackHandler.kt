@@ -1,22 +1,32 @@
 package com.jmlopez.fisojo
 
+import com.jmlopez.fisojo.config.FisheyeConfig
 import com.jmlopez.fisojo.config.SlackConfig
+import com.jmlopez.fisojo.dto.ReviewData
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
 
 class SlackHandler constructor(
-    private val config: SlackConfig
+    private val config: SlackConfig,
+    fisheyeConfig: FisheyeConfig
 ){
 
     var lastHttpCall = ""
+    val fisheyeBaseUrl = fisheyeConfig.baseServerUrl
 
-    fun sendMessageToSlack(message: String) {
-        val httpPostRequest = buildHttpPostRequest(messageToJson(message))
+    fun sendMessageToSlack(review: List<ReviewData>) {
+        val formData = review.joinToString(",", """{"attachments":[""", "]}") { it.toSlack() }
+        val httpPostRequest = buildHttpPostRequest(formData)
         val httpClient = HttpClients.createDefault()
         val response = httpClient.execute(httpPostRequest)
         if (response.statusLine.statusCode != org.apache.http.HttpStatus.SC_OK) {
-            throw Exception("HTTP POST to $httpPostRequest returned ${response.statusLine.statusCode} status code")
+            throw Exception("HTTP POST with payload $formData returned ${response.statusLine.statusCode} status code")
         }
     }
 
@@ -28,7 +38,19 @@ class SlackHandler constructor(
         return request
     }
 
-    private fun messageToJson(message: String) =
-            """{"text":"$message"}"""
 
+    private fun ReviewData.toSlack() =
+        """{"title":"${permaId.id}","title_link":"${url()}","author_name":"${authorLink()}","text":"$name",
+            |"footer":"<!date^${due()}^Due on {date_short_pretty} {time}|a>"}""".trimMargin()
+
+    private fun ReviewData.url() = "$fisheyeBaseUrl/cru/${this.permaId.id}"
+
+    private fun ReviewData.due(): Long =
+        LocalDateTime.parse(dueDate, FISHEYE_FORMATTER).atZone(ZoneOffset.UTC).toEpochSecond()
+
+    private fun ReviewData.authorLink() = "<$fisheyeBaseUrl/user/${creator.userName}|${creator.userName}>"
+
+    companion object {
+        val FISHEYE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.ENGLISH)!!
+    }
 }

@@ -34,12 +34,12 @@ fun main(args: Array<String>) {
     val configReader = ConfigReaderImpl(propsFilename!!)
 
     val fisheyeHandler = FisheyeHandler(configReader.getFisheyeConfig(), loggerProvider)
-    val slackHandler = SlackHandler(configReader.getSlackConfig())
+    val slackHandler = SlackHandler(configReader.getSlackConfig(), configReader.getFisheyeConfig())
 
     while(true) {
 
         // getting data from fisheye
-        var reviewDataListFromServer: List<ReviewData>
+        val reviewDataListFromServer: List<ReviewData>
         try {
             reviewDataListFromServer = fisheyeHandler.getReviewDataListFromServer()
         } catch (ex: Exception) {
@@ -50,36 +50,20 @@ fun main(args: Array<String>) {
             continue
         }
 
-        if (reviewDataListFromServer.isEmpty()) {
-            logger.info("New reviews not found")
-        } else {
-
-            var messageForSending = ""
-
-            reviewDataListFromServer.forEach { review ->
-                val id = review.permaId.id
-                val username = review.author.userName
-                val name = review.name
-                val str = "New CR by ${fisheyeHandler.createLinkTextForUsername(username)}: ${fisheyeHandler.createLinkTextForReviewId(name, id)}"
-                println(str)
-                messageForSending += str + "\n"
-            }
-
-            // sending data to slack
+        if (reviewDataListFromServer.isNotEmpty()) {
             try {
-                slackHandler.sendMessageToSlack(messageForSending)
+                slackHandler.sendMessageToSlack(reviewDataListFromServer)
             } catch (ex: Exception) {
-                logger.error("Error sending data to Slack")
+                logger.error("Error sending data to Slack", ex)
                 logger.error("Last call: ${slackHandler.lastHttpCall}")
-                logger.error("Sleeping ${SLEEP_IN_SECS*4} secs")
-                Thread.sleep(SLEEP_IN_MILIS*4)
-                continue
+                logger.error("Sleeping ${SLEEP_IN_SECS * 4} secs")
+                Thread.sleep(SLEEP_IN_MILIS * 4)
             }
         }
 
-        logger.info("Fisojo is going to sleep $SLEEP_IN_SECS secs")
+        logger.debug("Fisojo is going to sleep $SLEEP_IN_SECS secs")
         Thread.sleep(SLEEP_IN_MILIS)
-        logger.info("Fisojo is awaken")
+        logger.debug("Fisojo is awaken")
     }
 
 }
