@@ -4,14 +4,14 @@ import com.jmlopez.fisojo.config.ConfigReaderImpl
 import com.jmlopez.fisojo.dto.ReviewData
 import com.jmlopez.fisojo.logger.LoggerProvider
 import org.apache.logging.log4j.Level
+import org.apache.logging.log4j.Logger
 import kotlin.system.exitProcess
+
+const val SLEEP_IN_SECS: Long = 30
 
 fun main(args: Array<String>) {
 
     println("Hello, I'm Fisojo!!!")
-
-    val SLEEP_IN_SECS: Long = 30
-    val SLEEP_IN_MILIS: Long = SLEEP_IN_SECS*1000
 
     if (args.isEmpty() || args.size > 2) {
         System.err.println("Expected params: <properties_file> [--debug]")
@@ -43,10 +43,7 @@ fun main(args: Array<String>) {
         try {
             reviewDataListFromServer = fisheyeHandler.getReviewDataListFromServer()
         } catch (ex: Exception) {
-            logger.error("Error getting data from Fisheye: ${ex.message}")
-            logger.error("Last call: ${fisheyeHandler.lastHttpCall}")
-            logger.error("Sleeping ${SLEEP_IN_SECS*4} secs")
-            Thread.sleep(SLEEP_IN_MILIS*4)
+            logErrorAndSleep(logger, "Error getting data from Fisheye", ex, fisheyeHandler.lastHttpCall)
             continue
         }
 
@@ -54,16 +51,21 @@ fun main(args: Array<String>) {
             try {
                 slackHandler.sendMessageToSlack(reviewDataListFromServer)
             } catch (ex: Exception) {
-                logger.error("Error sending data to Slack", ex)
-                logger.error("Last call: ${slackHandler.lastHttpCall}")
-                logger.error("Sleeping ${SLEEP_IN_SECS * 4} secs")
-                Thread.sleep(SLEEP_IN_MILIS * 4)
+                logErrorAndSleep(logger, "Error sending data to Slack", ex, slackHandler.lastHttpCall)
+                continue
             }
         }
 
         logger.debug("Fisojo is going to sleep $SLEEP_IN_SECS secs")
-        Thread.sleep(SLEEP_IN_MILIS)
+        Thread.sleep(SLEEP_IN_SECS * 1000)
         logger.debug("Fisojo is awaken")
     }
 
+}
+
+fun logErrorAndSleep(logger: Logger, errorMessage: String, exception: Exception, lastHttpCall: String) {
+    logger.error(errorMessage, exception)
+    logger.error("Last call: $lastHttpCall")
+    logger.error("Sleeping ${SLEEP_IN_SECS * 4} secs")
+    Thread.sleep(SLEEP_IN_SECS * 4 * 1000)
 }
