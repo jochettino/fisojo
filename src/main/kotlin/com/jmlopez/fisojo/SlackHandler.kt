@@ -40,10 +40,19 @@ class SlackHandler constructor(
 
 
     private fun ReviewData.toSlack() =
-        """{"title":"${permaId.id}","title_link":"${url()}","author_name":"${authorLink()}","text":"$name",
-            |"footer":"<!date^${due()}^Due on {date_short_pretty} {time}|a>"}""".trimMargin()
+        """{"title":"${permaId.id}","title_link":"${url()}","author_name":"${authorLink()}","text":"$name"
+            |${appendDueDateIfExists()}}""".trimMargin()
 
     private fun ReviewData.url() = "$fisheyeBaseUrl/cru/${this.permaId.id}"
+
+    private fun ReviewData.appendDueDateIfExists(): String {
+        return if(dueDate.isNullOrBlank()) {
+            ""
+        } else {
+            """, "footer":"<!date^${due()}^Due on {date_short_pretty} {time}|a>""""
+        }
+
+    }
 
     private fun ReviewData.due(): Long =
         LocalDateTime.parse(dueDate, FISHEYE_FORMATTER).atZone(ZoneOffset.UTC).toEpochSecond()
