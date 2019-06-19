@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 class ConfigReaderImplTest {
     @Test
     fun readConfigHappyCase() {
-        val configReaderImpl = ConfigReaderImpl("src/test/resources/config/config.properties")
+        val configReaderImpl = ConfigHandlerImpl("src/test/resources/config/config.properties")
 
         assertEquals("any_webhookUrl", configReaderImpl.getSlackConfig().webhookUrl)
         assertEquals("any_feauth", configReaderImpl.getFisheyeConfig().feauth)

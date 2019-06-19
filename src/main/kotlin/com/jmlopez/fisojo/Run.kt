@@ -1,6 +1,6 @@
 package com.jmlopez.fisojo
 
-import com.jmlopez.fisojo.config.ConfigReaderImpl
+import com.jmlopez.fisojo.config.ConfigHandlerImpl
 import com.jmlopez.fisojo.dto.ReviewData
 import com.jmlopez.fisojo.logger.LoggerProvider
 import org.apache.logging.log4j.Level
@@ -30,11 +30,11 @@ fun main(args: Array<String>) {
         }
     }
 
-    val configReader = ConfigReaderImpl(propsFilename!!)
-    val pollingFrequency = configReader.getFisheyeConfig().pollingFrequency
+    val configHandler = ConfigHandlerImpl(propsFilename!!)
+    val pollingFrequency = configHandler.getFisheyeConfig().pollingFrequency
 
-    val fisheyeHandler = FisheyeHandler(configReader.getFisheyeConfig(), loggerProvider)
-    val slackHandler = SlackHandler(configReader.getSlackConfig(), configReader.getFisheyeConfig())
+    val fisheyeHandler = FisheyeHandler(configHandler, loggerProvider)
+    val slackHandler = SlackHandler(configHandler.getSlackConfig(), configHandler.getFisheyeConfig())
 
     while(true) {
 

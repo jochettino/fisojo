@@ -1,6 +1,7 @@
 package com.jmlopez.fisojo
 
 import com.google.gson.Gson
+import com.jmlopez.fisojo.config.ConfigHandler
 import com.jmlopez.fisojo.config.FisheyeConfig
 import com.jmlopez.fisojo.dto.Json4Kotlin_Base
 import com.jmlopez.fisojo.dto.ReviewData
@@ -8,27 +9,22 @@ import com.jmlopez.fisojo.logger.LoggerProvider
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
+
 
 class FisheyeHandler constructor(
-    private val config: FisheyeConfig,
+    private val configHandler: ConfigHandler,
     loggerProvider: LoggerProvider
 ){
-    val logger = loggerProvider.getLogger(FisheyeHandler::class.simpleName!!)
-    // Api doc site
-    // https://docs.atlassian.com/fisheye-crucible/latest/wadl/crucible.html?_ga=2.248528775.1036500565.1544699056-786505459.1542885403#d1e897
-    val API_FILTER_URL = "/rest-service/reviews-v1/filter"
-    val BASE_QUERY_STRING = "?states=Review&project=${config.projectId}"
-    // &fromDate=1544630400000
-    val MINUTES_TO_LOOK_TO_THE_PAST = 1
-    // createDate format: 2018-12-12T17:09:19.354+0000
-    val STRING_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+    private val logger = loggerProvider.getLogger(FisheyeHandler::class.simpleName!!)
 
-    var lastCrNumberSeen: Int = config.lastCrNumber
+    private var config: FisheyeConfig = configHandler.getFisheyeConfig()
 
-    var lastHttpCall = ""
+    private var baseQueryString: String = "?states=Review&project=${config.projectId}"
+
+    private var lastCrNumberSeen: Int = config.lastCrNumber
+
+    var lastHttpCall: String = ""
+
 
     fun getReviewDataListFromServer(): List<ReviewData> {
         val jsonStr = getRawReviewDataFromServer()
@@ -47,7 +43,7 @@ class FisheyeHandler constructor(
     }
 
     private fun buildHttpGetRequest(): HttpGet {
-        var queryStringParameters = addFromDateToQueryString(BASE_QUERY_STRING)
+        var queryStringParameters = addFromDateToQueryString(baseQueryString)
         queryStringParameters = addFeauthToQueryString(queryStringParameters)
         val request = HttpGet("${config.baseServerUrl}$API_FILTER_URL$queryStringParameters")
         logger.debug("(buildHttpGetRequest) ${request.uri}")
@@ -73,6 +69,7 @@ class FisheyeHandler constructor(
         val idNumber = getIdNumber(id)
         return if (idNumber > lastCrNumberSeen) {
             lastCrNumberSeen = idNumber
+            configHandler.updateLastCrNumber(lastCrNumberSeen)
             logger.debug("(isNewCr) updated las ID number seen to $idNumber")
             true
         } else {
@@ -81,14 +78,12 @@ class FisheyeHandler constructor(
         }
     }
 
-    // id = CR-TEAM-308
-    private fun getIdNumber(id: String) = id.substring(config.projectId.length+1).toInt()
+    private fun getIdNumber(id: String) = id.substring(config.projectId.length + 1).toInt()
 
-    private fun convertStringDateToTimestamp(createDate: String): Long {
-        val l = LocalDateTime.parse(createDate, DateTimeFormatter.ofPattern(STRING_DATE_PATTERN))
-        val timestamp = l.toInstant(ZoneOffset.UTC).toEpochMilli()
-        logger.debug("(convertStringDateToTimestamp) in: $createDate --> out: $timestamp")
-        return timestamp
+    companion object {
+        // Api doc site
+        // https://docs.atlassian.com/fisheye-crucible/latest/wadl/crucible.html?_ga=2.248528775.1036500565.1544699056-786505459.1542885403#d1e897
+        private const val API_FILTER_URL = "/rest-service/reviews-v1/filter"
+        private const val MINUTES_TO_LOOK_TO_THE_PAST = 1
     }
-
 }
