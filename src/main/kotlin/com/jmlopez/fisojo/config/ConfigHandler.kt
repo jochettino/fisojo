@@ -1,8 +1,9 @@
 package com.jmlopez.fisojo.config
 
-interface ConfigReader {
+interface ConfigHandler {
     fun getSlackConfig(): SlackConfig
     fun getFisheyeConfig(): FisheyeConfig
+    fun updateLastCrNumber(lastCrNumber: Int)
 }
 
 data class FisheyeConfig (
