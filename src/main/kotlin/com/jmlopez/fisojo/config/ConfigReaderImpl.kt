@@ -25,7 +25,9 @@ class ConfigReaderImpl constructor(
             feauth = props.getProperty("fisheye.feauth"),
             projectId = props.getProperty("fisheye.projectId"),
             baseServerUrl = props.getProperty("fisheye.baseServerUrl"),
-            lastCrNumber = props.getProperty("fisheye.lastCrNumber").toInt())
+            lastCrNumber = props.getProperty("fisheye.lastCrNumber").toInt(),
+            pollingFrequency = props.getProperty("fisheye.polling.frequency", "30").toLong()
+        )
 
     private fun buildSlackConfig(props: Properties) = SlackConfig(webhookUrl = props.getProperty("slack.webhookUrl"))
 

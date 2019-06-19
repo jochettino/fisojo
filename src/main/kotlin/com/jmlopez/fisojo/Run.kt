@@ -7,19 +7,18 @@ import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.Logger
 import kotlin.system.exitProcess
 
-const val SLEEP_IN_SECS: Long = 30
 
 fun main(args: Array<String>) {
 
-    println("Hello, I'm Fisojo!!!")
+    val loggerProvider = LoggerProvider()
+    val logger = loggerProvider.getLogger("main")
+
+    logger.error("Hello, I'm Fisojo!!!")
 
     if (args.isEmpty() || args.size > 2) {
         System.err.println("Expected params: <properties_file> [--debug]")
         exitProcess(1)
     }
-
-    val loggerProvider = LoggerProvider()
-    val logger = loggerProvider.getLogger("main")
 
     var propsFilename: String? = null
 
@@ -32,6 +31,7 @@ fun main(args: Array<String>) {
     }
 
     val configReader = ConfigReaderImpl(propsFilename!!)
+    val pollingFrequency = configReader.getFisheyeConfig().pollingFrequency
 
     val fisheyeHandler = FisheyeHandler(configReader.getFisheyeConfig(), loggerProvider)
     val slackHandler = SlackHandler(configReader.getSlackConfig(), configReader.getFisheyeConfig())
@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
         try {
             reviewDataListFromServer = fisheyeHandler.getReviewDataListFromServer()
         } catch (ex: Exception) {
-            logErrorAndSleep(logger, "Error getting data from Fisheye", ex, fisheyeHandler.lastHttpCall)
+            logErrorAndSleep(logger, "Error getting data from Fisheye", ex, fisheyeHandler.lastHttpCall, pollingFrequency)
             continue
         }
 
@@ -51,21 +51,27 @@ fun main(args: Array<String>) {
             try {
                 slackHandler.sendMessageToSlack(reviewDataListFromServer)
             } catch (ex: Exception) {
-                logErrorAndSleep(logger, "Error sending data to Slack", ex, slackHandler.lastHttpCall)
+                logErrorAndSleep(logger, "Error sending data to Slack", ex, slackHandler.lastHttpCall, pollingFrequency)
                 continue
             }
         }
 
-        logger.debug("Fisojo is going to sleep $SLEEP_IN_SECS secs")
-        Thread.sleep(SLEEP_IN_SECS * 1000)
+        logger.debug("Fisojo is going to sleep $pollingFrequency secs")
+        Thread.sleep(pollingFrequency * 1000)
         logger.debug("Fisojo is awaken")
     }
 
 }
 
-fun logErrorAndSleep(logger: Logger, errorMessage: String, exception: Exception, lastHttpCall: String) {
+fun logErrorAndSleep(
+    logger: Logger,
+    errorMessage: String,
+    exception: Exception,
+    lastHttpCall: String,
+    pollingFrequency: Long
+) {
     logger.error(errorMessage, exception)
     logger.error("Last call: $lastHttpCall")
-    logger.error("Sleeping ${SLEEP_IN_SECS * 4} secs")
-    Thread.sleep(SLEEP_IN_SECS * 4 * 1000)
+    logger.error("Sleeping ${pollingFrequency * 4} secs")
+    Thread.sleep(pollingFrequency * 4 * 1000)
 }
