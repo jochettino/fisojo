@@ -1,8 +1,8 @@
-package com.github.fisojo
+package com.github.jochettino.fisojo
 
-import com.github.fisojo.config.FisheyeConfig
-import com.github.fisojo.config.SlackConfig
-import com.github.fisojo.dto.ReviewData
+import com.github.jochettino.fisojo.config.FisheyeConfig
+import com.github.jochettino.fisojo.config.SlackConfig
+import com.github.jochettino.fisojo.dto.ReviewData
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients

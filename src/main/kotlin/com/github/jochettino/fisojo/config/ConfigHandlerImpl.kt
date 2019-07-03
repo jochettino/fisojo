@@ -1,4 +1,4 @@
-package com.github.fisojo.config
+package com.github.jochettino.fisojo.config
 
 import java.io.FileInputStream
 import java.io.FileOutputStream

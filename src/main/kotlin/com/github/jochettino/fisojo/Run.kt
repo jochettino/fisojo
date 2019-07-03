@@ -1,8 +1,8 @@
-package com.github.fisojo
+package com.github.jochettino.fisojo
 
-import com.github.fisojo.config.ConfigHandlerImpl
-import com.github.fisojo.dto.ReviewData
-import com.github.fisojo.logger.LoggerProvider
+import com.github.jochettino.fisojo.config.ConfigHandlerImpl
+import com.github.jochettino.fisojo.dto.ReviewData
+import com.github.jochettino.fisojo.logger.LoggerProvider
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.Logger
 import kotlin.system.exitProcess
@@ -34,7 +34,8 @@ fun main(args: Array<String>) {
     val pollingFrequency = configHandler.getFisheyeConfig().pollingFrequency
 
     val fisheyeHandler = FisheyeHandler(configHandler, loggerProvider)
-    val slackHandler = SlackHandler(configHandler.getSlackConfig(), configHandler.getFisheyeConfig())
+    val slackHandler =
+        SlackHandler(configHandler.getSlackConfig(), configHandler.getFisheyeConfig())
 
     while(true) {
 

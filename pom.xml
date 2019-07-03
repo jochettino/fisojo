@@ -3,7 +3,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.fisojo</groupId>
+    <groupId>com.github.jochettino</groupId>
     <artifactId>fisojo</artifactId>
     <version>1.3-SNAPSHOT</version>
     <packaging>jar</packaging>

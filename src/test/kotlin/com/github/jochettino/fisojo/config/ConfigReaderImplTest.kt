@@ -1,4 +1,4 @@
-package com.github.fisojo.config
+package com.github.jochettino.fisojo.config
 
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -6,7 +6,8 @@ import kotlin.test.assertEquals
 class ConfigReaderImplTest {
     @Test
     fun readConfigHappyCase() {
-        val configReaderImpl = ConfigHandlerImpl("src/test/resources/config/config.properties")
+        val configReaderImpl =
+            ConfigHandlerImpl("src/test/resources/config/config.properties")
 
         assertEquals("any_webhookUrl", configReaderImpl.getSlackConfig().webhookUrl)
         assertEquals("any_feauth", configReaderImpl.getFisheyeConfig().feauth)

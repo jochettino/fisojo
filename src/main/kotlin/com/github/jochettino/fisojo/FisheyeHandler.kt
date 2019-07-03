@@ -1,11 +1,11 @@
-package com.github.fisojo
+package com.github.jochettino.fisojo
 
 import com.google.gson.Gson
-import com.github.fisojo.config.ConfigHandler
-import com.github.fisojo.config.FisheyeConfig
-import com.github.fisojo.dto.Json4Kotlin_Base
-import com.github.fisojo.dto.ReviewData
-import com.github.fisojo.logger.LoggerProvider
+import com.github.jochettino.fisojo.config.ConfigHandler
+import com.github.jochettino.fisojo.config.FisheyeConfig
+import com.github.jochettino.fisojo.dto.Json4Kotlin_Base
+import com.github.jochettino.fisojo.dto.ReviewData
+import com.github.jochettino.fisojo.logger.LoggerProvider
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
