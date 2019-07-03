@@ -1,11 +1,11 @@
-package com.jmlopez.fisojo
+package com.github.fisojo
 
 import com.google.gson.Gson
-import com.jmlopez.fisojo.config.ConfigHandler
-import com.jmlopez.fisojo.config.FisheyeConfig
-import com.jmlopez.fisojo.dto.Json4Kotlin_Base
-import com.jmlopez.fisojo.dto.ReviewData
-import com.jmlopez.fisojo.logger.LoggerProvider
+import com.github.fisojo.config.ConfigHandler
+import com.github.fisojo.config.FisheyeConfig
+import com.github.fisojo.dto.Json4Kotlin_Base
+import com.github.fisojo.dto.ReviewData
+import com.github.fisojo.logger.LoggerProvider
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils

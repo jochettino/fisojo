@@ -1,4 +1,4 @@
-package com.jmlopez.fisojo.config
+package com.github.fisojo.config
 
 interface ConfigHandler {
     fun getSlackConfig(): SlackConfig

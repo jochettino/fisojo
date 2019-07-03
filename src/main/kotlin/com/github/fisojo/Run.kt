@@ -1,8 +1,8 @@
-package com.jmlopez.fisojo
+package com.github.fisojo
 
-import com.jmlopez.fisojo.config.ConfigHandlerImpl
-import com.jmlopez.fisojo.dto.ReviewData
-import com.jmlopez.fisojo.logger.LoggerProvider
+import com.github.fisojo.config.ConfigHandlerImpl
+import com.github.fisojo.dto.ReviewData
+import com.github.fisojo.logger.LoggerProvider
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.Logger
 import kotlin.system.exitProcess
@@ -43,7 +43,13 @@ fun main(args: Array<String>) {
         try {
             reviewDataListFromServer = fisheyeHandler.getReviewDataListFromServer()
         } catch (ex: Exception) {
-            logErrorAndSleep(logger, "Error getting data from Fisheye", ex, fisheyeHandler.lastHttpCall, pollingFrequency)
+            logErrorAndSleep(
+                logger,
+                "Error getting data from Fisheye",
+                ex,
+                fisheyeHandler.lastHttpCall,
+                pollingFrequency
+            )
             continue
         }
 
@@ -51,7 +57,13 @@ fun main(args: Array<String>) {
             try {
                 slackHandler.sendMessageToSlack(reviewDataListFromServer)
             } catch (ex: Exception) {
-                logErrorAndSleep(logger, "Error sending data to Slack", ex, slackHandler.lastHttpCall, pollingFrequency)
+                logErrorAndSleep(
+                    logger,
+                    "Error sending data to Slack",
+                    ex,
+                    slackHandler.lastHttpCall,
+                    pollingFrequency
+                )
                 continue
             }
         }

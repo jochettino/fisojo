@@ -1,4 +1,4 @@
-package com.jmlopez.fisojo.config
+package com.github.fisojo.config
 
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -30,10 +30,14 @@ class ConfigHandlerImpl constructor(
             projectId = props.getProperty(FISHEYE_PROJECT_ID),
             baseServerUrl = props.getProperty(FISHEYE_BASE_SERVER_URL),
             lastCrNumber = props.getProperty(FISHEYE_LAST_CR_NUMBER).toInt(),
-            pollingFrequency = props.getProperty(FISHEYE_POLLING_FREQUENCY, FISHEYE_FEAUTH_DEFAULT_VALLUE).toLong()
+            pollingFrequency = props.getProperty(
+                FISHEYE_POLLING_FREQUENCY,
+                FISHEYE_FEAUTH_DEFAULT_VALLUE
+            ).toLong()
         )
 
-    private fun buildSlackConfig(props: Properties) = SlackConfig(webhookUrl = props.getProperty(SLACK_WEBHOOK_URL))
+    private fun buildSlackConfig(props: Properties) =
+        SlackConfig(webhookUrl = props.getProperty(SLACK_WEBHOOK_URL))
 
     private fun loadPropertiesFile(): Properties {
         FileInputStream(configFilename).use { input ->

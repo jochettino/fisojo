@@ -1,4 +1,4 @@
-package com.jmlopez.fisojo.config
+package com.github.fisojo.config
 
 import org.junit.Test
 import kotlin.test.assertEquals

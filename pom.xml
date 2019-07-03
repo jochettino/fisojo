@@ -3,7 +3,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.jmlopez</groupId>
+    <groupId>com.github.fisojo</groupId>
     <artifactId>fisojo</artifactId>
     <version>1.3-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -15,7 +15,7 @@
         <kotlin.version>1.3.31</kotlin.version>
         <kotlin.code.style>official</kotlin.code.style>
         <junit.version>4.12</junit.version>
-        <main.class>com.jmlopez.fisojo.RunKt</main.class>
+        <main.class>com.github.fisojo.RunKt</main.class>
     </properties>
 
     <dependencies>

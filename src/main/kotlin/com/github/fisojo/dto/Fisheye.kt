@@ -1,4 +1,4 @@
-package com.jmlopez.fisojo.dto
+package com.github.fisojo.dto
 
 import com.google.gson.annotations.SerializedName
 

@@ -1,4 +1,4 @@
-package com.jmlopez.fisojo.logger
+package com.github.fisojo.logger
 
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
