@@ -2,6 +2,9 @@ package com.github.jochettino.fisojo.dto
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * DTO for handling the Fisheye responses
+ */
 data class Json4Kotlin_Base (
 
     @SerializedName("reviewData") val reviewData : List<ReviewData>

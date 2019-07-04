@@ -1,5 +1,8 @@
 package com.github.jochettino.fisojo.config
 
+/**
+ * Config handler interface
+ */
 interface ConfigHandler {
     fun getSlackConfig(): SlackConfig
     fun getFisheyeConfig(): FisheyeConfig
