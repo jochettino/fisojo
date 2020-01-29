@@ -26,7 +26,7 @@ class FisheyeHandler constructor(
     var lastHttpCall: String = ""
 
 
-    fun getReviewDataListFromServer(): List<ReviewData> {
+    fun getReviewsData(): List<ReviewData> {
         val jsonStr = getRawReviewDataFromServer()
         return jsonToReviewDataList(jsonStr)
     }

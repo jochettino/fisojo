@@ -1,0 +1,8 @@
+#!/bin/bash
+
+export SLACK_WEBHOOK="<webhook_generated_from_slack>"
+export FISHEYE_FEAUTH="<feusername>:<numbers>:<awesome_hash>"
+export FISHEYE_LAST_CR_NUMBER="<last cr>"
+export FISHEYE_BASE_SERVER_URL="<fisheye_server_url>"
+export FISHEYE_PROJECT_ID="<project id>"
+export FISHEYE_POLLING_FREQUENCY="30"

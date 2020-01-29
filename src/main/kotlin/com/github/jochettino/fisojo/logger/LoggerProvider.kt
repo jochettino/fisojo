@@ -19,4 +19,7 @@ class LoggerProvider {
 
     fun getLogger(name: String) = LogManager.getLogger(name)!!
 
+    companion object {
+        const val MAIN_LOGGER = "main"
+    }
 }

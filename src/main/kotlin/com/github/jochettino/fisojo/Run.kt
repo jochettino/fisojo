@@ -1,6 +1,7 @@
 package com.github.jochettino.fisojo
 
-import com.github.jochettino.fisojo.config.ConfigHandlerImpl
+import com.github.jochettino.fisojo.config.EnvironmentConfigHandlerImpl
+import com.github.jochettino.fisojo.config.FileConfigHandlerImpl
 import com.github.jochettino.fisojo.dto.ReviewData
 import com.github.jochettino.fisojo.logger.LoggerProvider
 import org.apache.logging.log4j.Level
@@ -9,28 +10,37 @@ import kotlin.system.exitProcess
 
 
 fun main(args: Array<String>) {
-
     val loggerProvider = LoggerProvider()
-    val logger = loggerProvider.getLogger("main")
+    val logger = loggerProvider.getLogger(LoggerProvider.MAIN_LOGGER)
 
-    logger.error("Hello, I'm Fisojo!!!")
+    val noConfigFile = "NO_CONFIG_FILE"
+    var propsFilename : String = noConfigFile
 
-    if (args.isEmpty() || args.size > 2) {
-        System.err.println("Expected params: <properties_file> [--debug]")
-        exitProcess(1)
-    }
-
-    var propsFilename: String? = null
+    logger.info("Hello, I'm Fisojo!!!")
 
     args.forEach {
-        if (it == "--debug") {
-            loggerProvider.setDefaultLevel(Level.DEBUG)
-        } else {
-            propsFilename = it
+        if (it.startsWith("-")) {
+            val flag = it.split("=").first()
+            when (flag) {
+                "--debug", "d" -> loggerProvider.setDefaultLevel(Level.DEBUG)
+                "--file", "-f" -> propsFilename = it.split("=").getOrNull(1) ?: noConfigFile
+                "--help", "-h" -> {
+                    System.out.println("""
+    --debug | -d ) Enable debugging mode, extra logging info
+    --file= | -f= ) Read configuration from a file specified
+    --help | -h ) Print this text
+                    """)
+                    exitProcess(0)
+                }
+            }
         }
     }
 
-    val configHandler = ConfigHandlerImpl(propsFilename!!)
+    val configHandler = when(propsFilename) {
+        noConfigFile -> EnvironmentConfigHandlerImpl()
+        else -> FileConfigHandlerImpl(propsFilename)
+    }
+
     val pollingFrequency = configHandler.getFisheyeConfig().pollingFrequency
 
     val fisheyeHandler = FisheyeHandler(configHandler, loggerProvider)
@@ -38,11 +48,10 @@ fun main(args: Array<String>) {
         SlackHandler(configHandler.getSlackConfig(), configHandler.getFisheyeConfig())
 
     while(true) {
+        val reviewsData: List<ReviewData>
 
-        // getting data from fisheye
-        val reviewDataListFromServer: List<ReviewData>
         try {
-            reviewDataListFromServer = fisheyeHandler.getReviewDataListFromServer()
+            reviewsData = fisheyeHandler.getReviewsData()
         } catch (ex: Exception) {
             logErrorAndSleep(
                 logger,
@@ -54,9 +63,9 @@ fun main(args: Array<String>) {
             continue
         }
 
-        if (reviewDataListFromServer.isNotEmpty()) {
+        if (reviewsData.isNotEmpty()) {
             try {
-                slackHandler.sendMessageToSlack(reviewDataListFromServer)
+                slackHandler.sendMessageToSlack(reviewsData)
             } catch (ex: Exception) {
                 logErrorAndSleep(
                     logger,
