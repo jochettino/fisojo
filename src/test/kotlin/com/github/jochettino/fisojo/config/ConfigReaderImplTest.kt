@@ -7,7 +7,7 @@ class ConfigReaderImplTest {
     @Test
     fun readConfigHappyCase() {
         val configReaderImpl =
-            ConfigHandlerImpl("src/test/resources/config/config.properties")
+            FileConfigHandlerImpl("src/test/resources/config/config.properties")
 
         assertEquals("any_webhookUrl", configReaderImpl.getSlackConfig().webhookUrl)
         assertEquals("any_feauth", configReaderImpl.getFisheyeConfig().feauth)

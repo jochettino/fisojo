@@ -18,7 +18,7 @@
         <kotlin.code.style>official</kotlin.code.style>
         <junit.version>4.12</junit.version>
         <dokka.version>0.9.18</dokka.version>
-        <main.class>com.github.fisojo.RunKt</main.class>
+        <main.class>com.github.jochettino.fisojo.RunKt</main.class>
     </properties>
 
     <dependencies>

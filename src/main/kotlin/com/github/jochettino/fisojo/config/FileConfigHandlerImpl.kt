@@ -2,9 +2,9 @@ package com.github.jochettino.fisojo.config
 
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.util.*
+import java.util.Properties
 
-class ConfigHandlerImpl constructor(
+class FileConfigHandlerImpl constructor(
     private val configFilename: String
 ): ConfigHandler {
 
