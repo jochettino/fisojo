@@ -3,6 +3,7 @@ package com.github.jochettino.fisojo
 import com.github.jochettino.fisojo.config.FisheyeConfig
 import com.github.jochettino.fisojo.config.SlackConfig
 import com.github.jochettino.fisojo.dto.ReviewData
+import com.github.jochettino.fisojo.logger.LoggerProvider
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.HttpClients
@@ -14,9 +15,11 @@ import java.util.Locale
 
 class SlackHandler constructor(
     private val config: SlackConfig,
-    fisheyeConfig: FisheyeConfig
+    fisheyeConfig: FisheyeConfig,
+    loggerProvider: LoggerProvider
 ){
 
+    private val logger = loggerProvider.getLogger(FisheyeHandler::class.simpleName!!)
     var lastHttpCall = ""
     val fisheyeBaseUrl = fisheyeConfig.baseServerUrl
 
@@ -24,6 +27,7 @@ class SlackHandler constructor(
         val formData = review.joinToString(",", """{"attachments":[""", "]}") { it.toSlack() }
         val httpPostRequest = buildHttpPostRequest(formData)
         val httpClient = HttpClients.createDefault()
+        logger.debug("Sending message to Slack")
         val response = httpClient.execute(httpPostRequest)
         if (response.statusLine.statusCode != org.apache.http.HttpStatus.SC_OK) {
             throw Exception("HTTP POST with payload $formData returned ${response.statusLine.statusCode} status code")
