@@ -45,7 +45,7 @@ fun main(args: Array<String>) {
 
     val fisheyeHandler = FisheyeHandler(configHandler, loggerProvider)
     val slackHandler =
-        SlackHandler(configHandler.getSlackConfig(), configHandler.getFisheyeConfig())
+        SlackHandler(configHandler.getSlackConfig(), configHandler.getFisheyeConfig(), loggerProvider)
 
     while(true) {
         val reviewsData: List<ReviewData>

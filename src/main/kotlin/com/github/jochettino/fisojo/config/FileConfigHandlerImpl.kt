@@ -30,11 +30,11 @@ class FileConfigHandlerImpl constructor(
             projectId = props.getProperty(FISHEYE_PROJECT_ID),
             baseServerUrl = props.getProperty(FISHEYE_BASE_SERVER_URL),
             lastCrNumber = props.getProperty(FISHEYE_LAST_CR_NUMBER).toInt(),
-            pollingFrequency = props.getProperty(
-                FISHEYE_POLLING_FREQUENCY,
-                FISHEYE_FEAUTH_DEFAULT_VALLUE
-            ).toLong()
-        )
+            pollingFrequency = props.getProperty(FISHEYE_POLLING_FREQUENCY)?.toLong()
+                    ?: ConfigDefaults.POLLING_FREQUENCY,
+            secondsToLookIntoThePast = props.getProperty(FISHEYE_SECONDS_TO_LOOK_INTO_THE_PAST)?.toLong()
+                    ?: ConfigDefaults.SECONDS_TO_LOOK_INTO_THE_PAST
+    )
 
     private fun buildSlackConfig(props: Properties) =
         SlackConfig(webhookUrl = props.getProperty(SLACK_WEBHOOK_URL))
@@ -62,9 +62,8 @@ class FileConfigHandlerImpl constructor(
         private const val FISHEYE_BASE_SERVER_URL = "fisheye.baseServerUrl"
         private const val FISHEYE_LAST_CR_NUMBER = "fisheye.lastCrNumber"
         private const val FISHEYE_POLLING_FREQUENCY = "fisheye.polling.frequency"
+        private const val FISHEYE_SECONDS_TO_LOOK_INTO_THE_PAST = "fisheye.secondsToLookIntoThePast"
 
         private const val SLACK_WEBHOOK_URL = "slack.webhookUrl"
-
-        private const val FISHEYE_FEAUTH_DEFAULT_VALLUE = "30"
     }
 }

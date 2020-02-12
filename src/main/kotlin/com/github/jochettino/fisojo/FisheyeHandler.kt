@@ -54,7 +54,7 @@ class FisheyeHandler constructor(
     }
 
     private fun addFromDateToQueryString(queryString: String): String {
-        val fromDateValue = System.currentTimeMillis() - (MINUTES_TO_LOOK_TO_THE_PAST * 60 * 1000)
+        val fromDateValue = System.currentTimeMillis() - (config.secondsToLookIntoThePast * 1000)
         return "$queryString&fromDate=$fromDateValue"
     }
 
@@ -84,6 +84,5 @@ class FisheyeHandler constructor(
         // Api doc site
         // https://docs.atlassian.com/fisheye-crucible/latest/wadl/crucible.html?_ga=2.248528775.1036500565.1544699056-786505459.1542885403#d1e897
         private const val API_FILTER_URL = "/rest-service/reviews-v1/filter"
-        private const val MINUTES_TO_LOOK_TO_THE_PAST = 1
     }
 }

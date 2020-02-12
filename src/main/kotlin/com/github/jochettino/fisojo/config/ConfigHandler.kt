@@ -16,7 +16,8 @@ data class FisheyeConfig (
     val baseServerUrl: String,
     // last review now in fisheye
     val lastCrNumber: Int,
-    val pollingFrequency: Long
+    val pollingFrequency: Long,
+    val secondsToLookIntoThePast: Long
 )
 
 data class SlackConfig (val webhookUrl: String)
