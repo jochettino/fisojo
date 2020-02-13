@@ -25,7 +25,7 @@ fun main(args: Array<String>) {
                 "--debug", "d" -> loggerProvider.setDefaultLevel(Level.DEBUG)
                 "--file", "-f" -> propsFilename = it.split("=").getOrNull(1) ?: noConfigFile
                 "--help", "-h" -> {
-                    System.out.println("""
+                    println("""
     --debug | -d ) Enable debugging mode, extra logging info
     --file= | -f= ) Read configuration from a file specified
     --help | -h ) Print this text

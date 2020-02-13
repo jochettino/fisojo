@@ -1,18 +1,19 @@
 package com.github.jochettino.fisojo
 
-import com.google.gson.Gson
 import com.github.jochettino.fisojo.config.ConfigHandler
 import com.github.jochettino.fisojo.config.FisheyeConfig
 import com.github.jochettino.fisojo.dto.Json4Kotlin_Base
 import com.github.jochettino.fisojo.dto.ReviewData
 import com.github.jochettino.fisojo.logger.LoggerProvider
+import com.google.gson.Gson
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
+import java.text.SimpleDateFormat
 
 
 class FisheyeHandler constructor(
-    private val configHandler: ConfigHandler,
+    configHandler: ConfigHandler,
     loggerProvider: LoggerProvider
 ){
     private val logger = loggerProvider.getLogger(FisheyeHandler::class.simpleName!!)
@@ -20,8 +21,6 @@ class FisheyeHandler constructor(
     private var config: FisheyeConfig = configHandler.getFisheyeConfig()
 
     private var baseQueryString: String = "?states=Review&project=${config.projectId}"
-
-    private var lastCrNumberSeen: Int = config.lastCrNumber
 
     var lastHttpCall: String = ""
 
@@ -62,14 +61,14 @@ class FisheyeHandler constructor(
 
     private fun jsonToReviewDataList(jsonStr: String): List<ReviewData> {
         val base = Gson().fromJson(jsonStr, Json4Kotlin_Base::class.java)
-        return base.reviewData.filter { isNewCr(it.permaId.id) }
+        return base.reviewData.filter { isNewCr(it.permaId.id, it.createDate) }
     }
 
-    private fun isNewCr(id: String): Boolean {
+    private fun isNewCr(id: String, createDate: String): Boolean {
         val idNumber = getIdNumber(id)
-        return if (idNumber > lastCrNumberSeen) {
-            lastCrNumberSeen = idNumber
-            configHandler.updateLastCrNumber(lastCrNumberSeen)
+        val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(createDate).toInstant()
+        return if (date.isAfter(config.lastCrTime)) {
+            config.lastCrTime = date
             logger.debug("(isNewCr) updated las ID number seen to $idNumber")
             true
         } else {
