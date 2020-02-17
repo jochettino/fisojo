@@ -1,8 +1,8 @@
 package com.github.jochettino.fisojo.config
 
 import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.util.Properties
+import java.time.Instant
+import java.util.*
 
 class FileConfigHandlerImpl constructor(
     private val configFilename: String
@@ -29,7 +29,7 @@ class FileConfigHandlerImpl constructor(
             feauth = props.getProperty(FISHEYE_FEAUTH),
             projectId = props.getProperty(FISHEYE_PROJECT_ID),
             baseServerUrl = props.getProperty(FISHEYE_BASE_SERVER_URL),
-            lastCrNumber = props.getProperty(FISHEYE_LAST_CR_NUMBER).toInt(),
+            lastCrTime = Instant.now(),
             pollingFrequency = props.getProperty(
                 FISHEYE_POLLING_FREQUENCY,
                 FISHEYE_FEAUTH_DEFAULT_VALLUE
@@ -51,16 +51,10 @@ class FileConfigHandlerImpl constructor(
 
     override fun getSlackConfig() = slackConfig
 
-    override fun updateLastCrNumber(lastCrNumber: Int) {
-        props.setProperty(FISHEYE_LAST_CR_NUMBER, lastCrNumber.toString())
-        props.store(FileOutputStream(configFilename), null)
-    }
-
     companion object {
         private const val FISHEYE_FEAUTH = "fisheye.feauth"
         private const val FISHEYE_PROJECT_ID = "fisheye.projectId"
         private const val FISHEYE_BASE_SERVER_URL = "fisheye.baseServerUrl"
-        private const val FISHEYE_LAST_CR_NUMBER = "fisheye.lastCrNumber"
         private const val FISHEYE_POLLING_FREQUENCY = "fisheye.polling.frequency"
 
         private const val SLACK_WEBHOOK_URL = "slack.webhookUrl"

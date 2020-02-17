@@ -13,7 +13,6 @@ class ConfigReaderImplTest {
         assertEquals("any_feauth", configReaderImpl.getFisheyeConfig().feauth)
         assertEquals("any_projectId", configReaderImpl.getFisheyeConfig().projectId)
         assertEquals("any_baseServerUrl", configReaderImpl.getFisheyeConfig().baseServerUrl)
-        assertEquals(123, configReaderImpl.getFisheyeConfig().lastCrNumber)
         assertEquals(10, configReaderImpl.getFisheyeConfig().pollingFrequency)
     }
 }

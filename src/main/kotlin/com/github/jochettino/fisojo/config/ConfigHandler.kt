@@ -1,21 +1,22 @@
 package com.github.jochettino.fisojo.config
 
+import java.time.Instant
+
 /**
  * Config handler interface
  */
 interface ConfigHandler {
     fun getSlackConfig(): SlackConfig
     fun getFisheyeConfig(): FisheyeConfig
-    fun updateLastCrNumber(lastCrNumber: Int)
+
 }
 
 data class FisheyeConfig (
     val feauth: String,
-    // CR-TEAM
+    // eg. CR-TEAM
     val projectId: String,
     val baseServerUrl: String,
-    // last review now in fisheye
-    val lastCrNumber: Int,
+    var lastCrTime: Instant,
     val pollingFrequency: Long
 )
 
