@@ -61,28 +61,26 @@ class FisheyeHandler constructor(
 
     private fun jsonToReviewDataList(jsonStr: String): List<ReviewData> {
         val base = Gson().fromJson(jsonStr, Json4Kotlin_Base::class.java)
-        return base.reviewData.filter { isNewCr(it.permaId.id, it.createDate) }
-    }
-
-    private fun isNewCr(id: String, createDate: String): Boolean {
-        val idNumber = getIdNumber(id)
-        val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(createDate).toInstant()
-        return if (date.isAfter(config.lastCrTime)) {
-            config.lastCrTime = date
-            logger.debug("(isNewCr) updated las ID number seen to $idNumber")
-            true
-        } else {
-            logger.debug("(isNewCr) $idNumber has been published yet, skipping it")
-            false
+        val newReviews = base.reviewData.filter { isNewCr(it) }
+        if (newReviews.isNotEmpty()) {
+            config.lastCrTime = newReviews.map { it.createInstant() }.max()!!
+            logger.debug("(isNewCr) updated last CR time seen to ${config.lastCrTime}")
         }
+        return newReviews
     }
 
-    private fun getIdNumber(id: String) = id.substring(config.projectId.length + 1).toInt()
+    private fun isNewCr(review: ReviewData): Boolean {
+        return review.createInstant().isAfter(config.lastCrTime)
+    }
 
     companion object {
         // Api doc site
         // https://docs.atlassian.com/fisheye-crucible/latest/wadl/crucible.html?_ga=2.248528775.1036500565.1544699056-786505459.1542885403#d1e897
         private const val API_FILTER_URL = "/rest-service/reviews-v1/filter"
         private const val MINUTES_TO_LOOK_TO_THE_PAST = 1
+        private val XML_FMT = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     }
+
+    private fun ReviewData.createInstant() =
+        XML_FMT.parse(createDate).toInstant()
 }
