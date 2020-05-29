@@ -1,6 +1,9 @@
 # How to configure
 Here there are some guidelines for configuring Fisojo
 
+## Fisojo
+Fisojo can be configured using a config file ([see example](/config.props.example)) or environment variables ([see example](/setenv.sh.example)) 
+
 ## Fisheye
 Fisheye is the source of data for reading.
 
