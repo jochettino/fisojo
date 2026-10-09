@@ -1,5 +1,8 @@
-FROM gradle:6.9-jdk8
-COPY . /home/gradle/fisojo
-WORKDIR /home/gradle/fisojo
-RUN gradle fatJar --no-daemon
-ENTRYPOINT ["java", "-jar", "build/libs/fisojo-1.3-SNAPSHOT-jar-with-dependencies.jar", "--debug"]
+FROM eclipse-temurin:26-jdk AS build
+WORKDIR /src
+COPY . .
+RUN ./gradlew fatJar --no-daemon
+
+FROM eclipse-temurin:26-jre
+COPY --from=build /src/build/libs/fisojo-1.3-SNAPSHOT-jar-with-dependencies.jar /fisojo.jar
+ENTRYPOINT ["java", "-jar", "/fisojo.jar", "--debug"]

@@ -4,17 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Fisojo is a long-running Kotlin daemon (Gradle Kotlin DSL, JDK 8, Kotlin 1.3) that polls an Atlassian Fisheye/Crucible server for newly created code reviews and posts them to Slack via an incoming webhook.
+Fisojo is a long-running Kotlin daemon (Gradle Kotlin DSL, JDK 26, Kotlin 2.4) that polls an Atlassian Fisheye/Crucible server for newly created code reviews and posts them to Slack via an incoming webhook.
 
 ## Commands
 
-- Build + tests: `./gradlew build` (what Travis CI runs)
+- Build + tests: `./gradlew build` (what Travis CI runs). Requires a JDK 26 toolchain (`jvmToolchain(26)` in `build.gradle.kts`)
 - Tests only: `./gradlew test`; single test class: `./gradlew test --tests '*ConfigReaderImplTest'`
 - Package: `./gradlew fatJar` produces `build/libs/fisojo-<version>-jar-with-dependencies.jar` (the runnable fat jar; main class `com.github.jochettino.fisojo.RunKt`)
 - Run with a config file: `java -jar build/libs/fisojo-*-jar-with-dependencies.jar --file=config.props` (see `config.props.example`)
 - Run with env vars: source a copy of `setenv.sh.example`, then run the jar with no `--file`
 - Flags: `--debug`/`-d`, `--file=<path>`/`-f=<path>`, `--help`/`-h`
-- Docker: the `Dockerfile` builds the jar and runs it with `--debug`; config is passed as `SLACK_WEBHOOK_URL`, `FISHEYE_FEAUTH`, `FISHEYE_BASE_SERVER_URL`, `FISHEYE_PROJECT_ID`, `FISHEYE_POLLING_FREQUENCY`. The jar name in the `Dockerfile` hardcodes the version from `build.gradle.kts`, so update both together when bumping the version.
+- Docker: the multi-stage `Dockerfile` builds the jar and runs it with `--debug`; config is passed as `SLACK_WEBHOOK_URL`, `FISHEYE_FEAUTH`, `FISHEYE_BASE_SERVER_URL`, `FISHEYE_PROJECT_ID`, `FISHEYE_POLLING_FREQUENCY`. The jar name in the `Dockerfile` hardcodes the version from `build.gradle.kts`, so update both together when bumping the version.
 
 ## Architecture
 

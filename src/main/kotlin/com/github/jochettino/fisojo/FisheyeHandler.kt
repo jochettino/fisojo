@@ -63,7 +63,7 @@ class FisheyeHandler constructor(
         val base = Gson().fromJson(jsonStr, Json4Kotlin_Base::class.java)
         val newReviews = base.reviewData.filter { isNewCr(it) }
         if (newReviews.isNotEmpty()) {
-            config.lastCrTime = newReviews.map { it.createInstant() }.max()!!
+            config.lastCrTime = newReviews.map { it.createInstant() }.maxOrNull()!!
             logger.debug("(isNewCr) updated last CR time seen to ${config.lastCrTime}")
         }
         return newReviews
