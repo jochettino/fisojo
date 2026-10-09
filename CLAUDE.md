@@ -8,9 +8,9 @@ Fisojo is a long-running Kotlin daemon (Gradle Kotlin DSL, JDK 8, Kotlin 1.3) th
 
 ## Commands
 
-- Build + tests: `gradle build` (what Travis CI runs; there is no Gradle wrapper yet)
-- Tests only: `gradle test`; single test class: `gradle test --tests '*ConfigReaderImplTest'`
-- Package: `gradle fatJar` produces `build/libs/fisojo-<version>-jar-with-dependencies.jar` (the runnable fat jar; main class `com.github.jochettino.fisojo.RunKt`)
+- Build + tests: `./gradlew build` (what Travis CI runs)
+- Tests only: `./gradlew test`; single test class: `./gradlew test --tests '*ConfigReaderImplTest'`
+- Package: `./gradlew fatJar` produces `build/libs/fisojo-<version>-jar-with-dependencies.jar` (the runnable fat jar; main class `com.github.jochettino.fisojo.RunKt`)
 - Run with a config file: `java -jar build/libs/fisojo-*-jar-with-dependencies.jar --file=config.props` (see `config.props.example`)
 - Run with env vars: source a copy of `setenv.sh.example`, then run the jar with no `--file`
 - Flags: `--debug`/`-d`, `--file=<path>`/`-f=<path>`, `--help`/`-h`
