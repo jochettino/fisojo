@@ -4,17 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Fisojo is a long-running Kotlin daemon (Maven, JDK 8, Kotlin 1.3) that polls an Atlassian Fisheye/Crucible server for newly created code reviews and posts them to Slack via an incoming webhook.
+Fisojo is a long-running Kotlin daemon (Gradle Kotlin DSL, JDK 8, Kotlin 1.3) that polls an Atlassian Fisheye/Crucible server for newly created code reviews and posts them to Slack via an incoming webhook.
 
 ## Commands
 
-- Build + tests: `mvn verify -B` (what Travis CI runs)
-- Tests only: `mvn test`; single test class: `mvn test -Dtest=ConfigReaderImplTest`
-- Package: `mvn package` produces `target/fisojo-<version>-jar-with-dependencies.jar` (the runnable fat jar; main class `com.github.jochettino.fisojo.RunKt`)
-- Run with a config file: `java -jar target/fisojo-*-jar-with-dependencies.jar --file=config.props` (see `config.props.example`)
+- Build + tests: `gradle build` (what Travis CI runs; there is no Gradle wrapper yet)
+- Tests only: `gradle test`; single test class: `gradle test --tests '*ConfigReaderImplTest'`
+- Package: `gradle fatJar` produces `build/libs/fisojo-<version>-jar-with-dependencies.jar` (the runnable fat jar; main class `com.github.jochettino.fisojo.RunKt`)
+- Run with a config file: `java -jar build/libs/fisojo-*-jar-with-dependencies.jar --file=config.props` (see `config.props.example`)
 - Run with env vars: source a copy of `setenv.sh.example`, then run the jar with no `--file`
 - Flags: `--debug`/`-d`, `--file=<path>`/`-f=<path>`, `--help`/`-h`
-- Docker: the `Dockerfile` builds the jar and runs it with `--debug`; config is passed as `SLACK_WEBHOOK_URL`, `FISHEYE_FEAUTH`, `FISHEYE_BASE_SERVER_URL`, `FISHEYE_PROJECT_ID`, `FISHEYE_POLLING_FREQUENCY`. The jar name in the `Dockerfile` hardcodes the version from `pom.xml`, so update both together when bumping the version.
+- Docker: the `Dockerfile` builds the jar and runs it with `--debug`; config is passed as `SLACK_WEBHOOK_URL`, `FISHEYE_FEAUTH`, `FISHEYE_BASE_SERVER_URL`, `FISHEYE_PROJECT_ID`, `FISHEYE_POLLING_FREQUENCY`. The jar name in the `Dockerfile` hardcodes the version from `build.gradle.kts`, so update both together when bumping the version.
 
 ## Architecture
 
